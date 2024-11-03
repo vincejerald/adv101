@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Quiz Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            max-width: 600px;
+            background-color: #f9f9f9;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .result {
+            font-weight: bold;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Quiz Application</h1>
+<div id="quiz-container"></div>
+<button id="submit-btn" style="display:none;">Submit Answers</button>
+<div class="result" id="result" style="display:none;"></div>
+<button id="retry-btn" style="display:none;">Retake Quiz</button>
+
+<script>
+    const questions = [
+        {
+            question: "What is the capital of France?",
+            options: ["Berlin", "Madrid", "Paris", "Lisbon"],
+            answer: 2 // Index of the correct answer
+        },
+        {
+            question: "Which planet is known as the Red Planet?",
+            options: ["Earth", "Mars", "Jupiter", "Saturn"],
+            answer: 1
+        },
+        {
+            question: "What is the largest ocean on Earth?",
+            options: ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
+            answer: 3
+        }
+    ];
+
+    let userAnswers = [];
+    let score = 0;
+
+    function loadQuiz() {
+        const quizContainer = document.getElementById('quiz-container');
+        quizContainer.innerHTML = '';
+
+        questions.forEach((question, index) => {
+            const questionElement = document.createElement('div');
+            questionElement.classList.add('question');
+            questionElement.innerHTML = `
+                <h3>${question.question}</h3>
+                ${question.options.map((option, i) => `
+                    <label>
+                        <input type="radio" name="question${index}" value="${i}">
+                        ${option}
+                    </label>
+                `).join('')}
+            `;
+            quizContainer.appendChild(questionElement);
+        });
+
+        document.getElementById('submit-btn').style.display = 'block';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('retry-btn').style.display = 'none';
+    }
+
+    function submitAnswers() {
+        score = 0;
+        userAnswers = [];
+
+        questions.forEach((question, index) => {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+            if (selectedOption) {
+                userAnswers.push(Number(selectedOption.value));
+                if (Number(selectedOption.value) === question.answer) {
+                    score++;
+                }
+            } else {
+                userAnswers.push(null); // No answer selected
+            }
+        });
+
+        showResult();
+    }
+
+    function showResult() {
+        const resultElement = document.getElementById('result');
+        resultElement.innerHTML = `Your score is ${score} out of ${questions.length}.`;
+        resultElement.style.display = 'block';
+
+        document.getElementById('submit-btn').style.display = 'none';
+        document.getElementById('retry-btn').style.display = 'block';
+    }
+
+    function retryQuiz() {
+        loadQuiz();
+    }
+
+    document.getElementById('submit-btn').addEventListener('click', submitAnswers);
+    document.getElementById('retry-btn').addEventListener('click', retryQuiz);
+
+    // Load the quiz when the page is loaded
+    loadQuiz();
+</script>
+
+</body>
+</html>
